@@ -33,7 +33,7 @@ import java.util.List;
  * By default, java agent jar URLs will be included in the SystemClassLoader classpath, if cabin is not used, no matter
  * using java -jar or java -cp to setup a program, all the agent urls and biz urls are in the SystemClassloader.
  * Handling of Cabin?
- * + While cabin is used, agent urls can be handled as biz urls, and there is no isolation between agent and biz urls.
+ * + When cabin isn't used, agent urls can be handled as biz urls, and there is no isolation between agent and biz urls.
  * + Cabin use JavaAgentClassLoader to load agent classes for isolation.
  * + Agent classes can load classes from biz: default imported classes(spring/jedis/slf4j, etc.), provided classes.
  * + Agent Classes can load classes from lib: exported classes, provided classes.
@@ -93,17 +93,19 @@ public class JavaAgentClassLoader extends AbstractClassLoader {
             return clazz;
         }
 
-        //load local classes from classpath urls
-        clazz = loadLocalClass(name);
-        if (clazz != null) {
-            debugClassLoadMessage(clazz, "loadLocalClass", name);
-            return clazz;
-        }
-
+        //Normally, agent is used to do some pre-init operation, such as code instrumentation, so instrumentation logic
+        //would not invoke biz class and method directly; In another case, the a agent defined class may invoke a
+        //biz/lib class and be weaved into biz classes, so the agent classloader should be able to load biz classes.
         //load shared classes
         clazz = loadSharedClass(name);
         if (clazz != null) {
             debugClassLoadMessage(clazz, "loadSharedClass", name);
+            return clazz;
+        }
+        //load local classes from classpath urls
+        clazz = loadLocalClass(name);
+        if (clazz != null) {
+            debugClassLoadMessage(clazz, "loadLocalClass", name);
             return clazz;
         }
 

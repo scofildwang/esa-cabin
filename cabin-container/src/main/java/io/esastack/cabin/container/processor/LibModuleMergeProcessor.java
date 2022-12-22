@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Manifest;
 
 import static io.esastack.cabin.common.constant.Constants.*;
 
@@ -140,10 +141,15 @@ public class LibModuleMergeProcessor implements Processor {
             for (URL moduleUrl : moduleUrls) {
                 try {
                     final Archive module = ArchiveUtils.createArchiveFromUrl(moduleUrl);
-                    final String moduleName = module.getManifest().getMainAttributes().getValue(MANIFEST_MODULE_NAME);
+                    final Manifest manifest = module.getManifest();
+                    if (manifest == null) {
+                        throw new CabinRuntimeException("Invalid module Jar, no manifest provided！");
+                    }
+                    String moduleName = manifest.getMainAttributes().getValue(MANIFEST_MODULE_NAME);
                     if (CabinStringUtil.isBlank(moduleName)) {
-                        throw new CabinRuntimeException("Invalid module Manifest, blank Module-Name, "
+                        LOGGER.info("Invalid module Manifest, blank Module-Name, use url as module name: "
                                 + moduleUrl.toExternalForm());
+                        moduleName = moduleUrl.toExternalForm();
                     }
                     if (urlModules.put(moduleName, module) != null) {
                         throw new CabinRuntimeException(

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import static io.esastack.cabin.common.constant.Constants.*;
 
@@ -108,7 +109,11 @@ public class LibModuleFactoryServiceImpl implements LibModuleFactoryService<LibM
 
     private int getPriority(final String name, final Archive archive) {
         try {
-            final String priority = archive.getManifest().getMainAttributes().getValue(MANIFEST_MODULE_PRIORITY);
+            final Manifest manifest = archive.getManifest();
+            if (manifest == null) {
+                throw new CabinRuntimeException("Invalid module Jar, no manifest provided！");
+            }
+            final String priority = manifest.getMainAttributes().getValue(MANIFEST_MODULE_PRIORITY);
             if (CabinStringUtil.isNotBlank(priority)) {
                 return Integer.parseInt(priority);
             }

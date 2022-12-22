@@ -1,7 +1,5 @@
 package io.esastack.cabin.agent;
 
-import io.esastack.cabin.common.constant.Constants;
-
 import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.net.URISyntaxException;

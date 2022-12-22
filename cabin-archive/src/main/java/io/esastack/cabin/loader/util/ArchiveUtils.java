@@ -43,10 +43,11 @@ public class ArchiveUtils {
     private static final String URL_PROTOCOL_VFS = "vfs";
 
     /**
-     * @param url if it's a normal url. If it's a dir, an ExplodedArchive is created, else a JarFileArchive is created.
-     *            if it's a fat jar url, such as "jar:file:/tmp/xxx.jar/dir1/dir2!/yyy.jar!/" or
-     *            "jar:file:/tmp/xxx.jar/dir1/dir2!/yyy.jar!/xxx.class", the Archive represents nest jar "yyy.jar"
-     *            is returned.
+     * If it's a dir file, an ExplodedArchive is created;
+     * if it is a jar file, a JarFileArchive is created.
+     * if it's a fat jar url, such as "jar:file:/parent/parent.jar!/subdir/sub.jar!/" or
+     * "jar:file:/parent/parent.jar!/subdir/sub.jar!/some.class", an archive of nest jar "sub.jar" is returned.
+     * @param url url
      */
     public static Archive createArchiveFromUrl(URL url) throws IOException {
         try {
@@ -130,6 +131,13 @@ public class ArchiveUtils {
         return containerRawArchives.get(0);
     }
 
+    /**
+     * Module archives are extracted from far jar, and converted to URL; then converted into archives again in
+     * LibModuleProcessor. This is for using the same process code for class path launcher.
+     * TODO, optimize this.
+     * @param executableArchive fat jar of all biz code.
+     * @return urls
+     */
     public static URL[] extractModuleURLs(final Archive executableArchive) {
         final List<Archive> moduleRawArchives;
         try {
