@@ -98,9 +98,12 @@ ESA Cabin用于解决模块间类冲突。要解决的问题是，当一个应�
 如果要将多个module项目合并打包成一个FatJar, 具体步骤如下:
 + 创建一个新module来依赖需要合并在一起的module，如xxx-cabin，在其pom中依赖此项目的所有其他module和额外需要的三方依赖；
 + 在xxx-cabin的pom中加入cabin-module-maven-plugin插件，并配置相关信息
+
 <br>
 下面用ESA RPC举例讲解如何打包：
+
 + esa-rpc-cabin (会传递三方依赖)
+
 ```xml
 <dependencies>
     ...加入需要合并打包的module和依赖
