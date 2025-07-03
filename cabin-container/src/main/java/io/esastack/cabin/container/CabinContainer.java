@@ -147,7 +147,6 @@ public class CabinContainer {
             initializer.initialize(this.cabinBootContext);
             final String setUpMsg = "Cabin Container started in " + (System.currentTimeMillis() - startAt) + " ms.";
             LOGGER.info(setUpMsg);
-            System.out.println(setUpMsg);
         }
     }
 
